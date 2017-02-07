@@ -1,49 +1,95 @@
 package com;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
+
 
 public class DbTransaction {
-private String url=" 1521:ORCLILP";
-private String tableName;
-private Connection connection=null;
-private String user="aja185core";
-private String password="aja185core";
-public String getUrl(){
-	return password;
 	
-}
-public DbTransaction(String url, String user, String password, String tableName) {
-	//super();
-	this.url = url;
-	this.tableName = tableName;
-	this.user = user;
-	this.password = password;
-}
-public String getTableName() {
-	return tableName;
-}
-public void setTableName(String tableName) {
-	this.tableName = tableName;
-}
-public Connection getConnection() {
-	try {
-		closeConnection();
-		Class.forName("oracle.jdbc.driver.OracleDriver");
-		connection = DriverManager.getConnection(url,user,password);
-		} catch (SQLException e) {
-		e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-		e.printStackTrace();
-		}
-		return connection;
-}
+	
+	private String url;
+	private String tableName;
+	private String tableName1;
+	private String tableName2;
+	private Connection connection;
+	private String user;
+	private String password;
+	
+	
+	public String getTableName1() {
+		return tableName1;
+	}
 
-public String getUser() {
-	return user;
-}
-public void closeConnection(){
+
+
+	public void setTableName1(String tableName1) {
+		this.tableName1 = tableName1;
+	}
+
+
+
+	public String getTableName2() {
+		return tableName2;
+	}
+
+
+
+	public void setTableName2(String tableName2) {
+		this.tableName2 = tableName2;
+	}
+
+
+
+	public String getUrl() {
+		return url;
+	}
+	
+	
+	
+
+
+
+	public DbTransaction(String url, String user, String password, String tableName, String tableName1,
+			String tableName2) {
+		super();
+		this.url = url;
+		this.tableName = tableName;
+		this.tableName1 = tableName1;
+		this.tableName2 = tableName2;
+		this.user = user;
+		this.password = password;
+	}
+
+
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	public String getTableName() {
+		return tableName;
+	}
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
+	}
+	
+	
+	public Connection getConnection()
+	{
+	try {
+	closeConnection();
+	Class.forName("oracle.jdbc.driver.OracleDriver");
+	connection = DriverManager.getConnection(url,user,password);
+	} catch (SQLException e) {
+	// TODO Auto-generated catch block
+	e.printStackTrace();
+	} catch (ClassNotFoundException e) {
+	// TODO Auto-generated catch block
+	e.printStackTrace();
+	}
+	return connection;
+	}
+
+	public void closeConnection()
+	{
 	try
 	{
 	if(connection != null && connection.isClosed() == false)
@@ -54,12 +100,8 @@ public void closeConnection(){
 	{
 	e.printStackTrace();
 	}
-}
-public void setUser(String user) {
-	this.user = user;
-}
-public void setUrl(String url) {
-	this.url = url;
-}
+	}
+	
+	
 
 }

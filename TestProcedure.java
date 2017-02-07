@@ -2,60 +2,86 @@ package com;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import com.DbTransaction;
+import java.util.HashMap;
+
 public class TestProcedure {
-public static void main(String args[]) throws SQLException{
-	
-	//TestProcedure tp=new TestProcedure();
-	DbTransaction db=new DbTransaction("jdbc:oracle:thin:@INGNRGPILPHP01:1521:ORCLILP","aja185core" ,"aja185core", "tbl_test_1190848");
-	
-		System.out.println(getTestsCount(db));
-
-
-	for(Test t:getTests(db,2)){
-		System.out.println(t.id+" "+t.title);
-	}
 	
 	
-}
-public static  int getTestsCount(DbTransaction db) throws SQLException{
-	Connection con=db.getConnection();
-	Statement stmt=con.createStatement();  
-	int count=0;
-	ResultSet rs=stmt.executeQuery("select * from tbl_test_1190848");  
-	while(rs.next()) {
-		count++;
-	}
-	db.closeConnection();
-
-	return count;
-}
-public static ArrayList<Test> getTests(DbTransaction db,int a){
-	ArrayList <Test> test=new ArrayList<Test>();
-	Connection con=db.getConnection();
-	Statement stmt = null;
-	try {
-		stmt = con.createStatement();
-		ResultSet rs=stmt.executeQuery("select * from tbl_test_1190848");
-		while(rs.next()) {
-		if(rs.getInt(1)>a){
-		
-			Test t=new Test();
-			t.id=rs.getInt(1);
-			t.title=rs.getString(2);
-			test.add(t);
+	
+	public static HashMap<Integer, Book> getMapbybookId(DbTransaction db) 
+	{
+		HashMap<Integer, Book> hm = new HashMap<Integer,Book>();
+		Connection cn = null;
+		Statement st = null;
+		ResultSet rs = null;
+		try
+		{
+			cn=db.getConnection();
+			st=cn.createStatement();
+			String sql="SELECT * FROM " +db.getTableName();
 			
+			rs = st.executeQuery(sql);
+			
+			while(rs.next())
+			{
+				Book b = new Book();
+				b.setBook_id(rs.getInt("BOOK_ID"));
+				b.setPages(rs.getInt("PAGES"));
+				b.setPrice(rs.getDouble("PRICE"));
+				b.setTitle(rs.getString("TITLE"));
+				/*System.out.println(b.getBook_id());*/
+				
+				hm.put(b.getBook_id(), b);
+				/*System.out.println(hm.get(b.getBook_id()).getBook_id());*/
+			}
+			
+			return hm;
+		}catch (Exception e) {
+			// TODO: handle exception
+			return null;
 		}
+		
+	}
+	
+	
+	public static ArrayList<Author> getBookscountbyAuthor(DbTransaction db) 
+	{
+		ArrayList<Author> ar = new ArrayList<Author>();
+		Connection cn = null;
+		Statement st = null;
+		ResultSet rs = null;
+		try
+		{
+			cn=db.getConnection();
+			st=cn.createStatement();
+			String sql="SELECT "+db.getTableName1()+".AUTHOR_NAME, COUNT("+db.getTableName2()+".AUTHOR_ID) FROM "+db.getTableName1()+" , "+db.getTableName2()+" WHERE "+db.getTableName1()+".AUTHOR_ID="+db.getTableName2()+".AUTHOR_ID GROUP BY "+db.getTableName1()+".AUTHOR_NAME";
+			
+			rs = st.executeQuery(sql);
+			System.out.println(rs.getFetchSize());
+			while(rs.next())
+			{
+				Author a = new Author();
+				a.setAuthorName(rs.getString(1));
+				/*System.out.println(rs.getString(1));*/
+				a.setCount(rs.getInt(2));
+				/*System.out.println(rs.getInt(2));*/
+				
+				
+				ar.add(a);
+				
+			}
+			
+			
+		}catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return null;
 		}
-	} catch (SQLException e) {
-		e.printStackTrace();
-	}  
+		
+		return ar;
+	}
 	
 
-	db.closeConnection();
-	return test;
-	}
 }
